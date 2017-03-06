@@ -1,0 +1,73 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion '25.0.0'
+    defaultConfig {
+        applicationId "br.com.thiengo.cinemaapp"
+        minSdkVersion 14
+        targetSdkVersion 25
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    compile 'com.android.support:appcompat-v7:25.2.0'
+    testCompile 'junit:junit:4.12'
+    /* PARA USO DO RECYCLERVIEW */
+    compile 'com.android.support:design:25.2.0'
+    /* PARA USO DO CARDVIEW */
+    compile 'com.android.support:cardview-v7:25.2.0'
+    /* PARA CARREGAMENTO DE IMAGENS REMOTAS */
+    compile 'com.squareup.picasso:picasso:2.5.2'
+
+    /* PARA MATERIALDIALOG */
+    compile 'me.drakeet.materialdialog:library:1.3.1'
+
+    /* PARA MONETIZAÇÃO COM APPODEAL */
+    compile 'com.google.android.gms:play-services-ads:10.2.0'
+    compile 'com.google.android.gms:play-services-location:10.2.0'
+    compile project(':cheetah-mobile-3.4.7')
+    compile files('libs/yandex-metrica-2.62.jar')
+    compile files('libs/chartboost-6.6.1.jar')
+    compile files('libs/flurry-analytics-6.5.0.jar')
+    compile files('libs/unity-ads-2.0.4.jar')
+    compile files('libs/applovin-6.3.0.jar')
+    compile files('libs/appodeal-1.15.9.jar')
+    compile files('libs/my-target-4.5.10.jar')
+
+    /* PARA MONETIZAÇÃO COM HUQ */
+    compile 'io.huq:sourcekit:1.1.50'
+}
+
+buildscript {
+    repositories {
+        jcenter()
+        maven { url 'http://maven.calldorado.com/nexus/content/repositories/releases' }
+    }
+    dependencies {
+        classpath 'com.calldorado:calldorado-gradle-plugin:+'
+    }
+}
+apply plugin: 'calldorado'
+calldorado {
+    accountId = "a1-ac3673e8-00da-45d9-ba76-ffde7051ca37"
+    appId = "b0-a3e259b8-04f2-4880-969d-9b3fadfb5b24"
+}
+dependencies {
+    compile('com.calldorado:calldorado-release:2.3.+@aar') {
+        transitive = true
+    }
+}

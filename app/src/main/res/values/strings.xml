@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">Cinema App</string>
+    <string name="app_odeal_api_key">0547cb0ee9931c994420cda3e951bffc85147dddc62aec43</string>
+    <string name="huq_api_key">0f9764e3-3c97-4f57-b248-366f6834c472</string>
+
+    <string name="dialog_titulo">Permissão App</string>
+    <string name="dialog_positive_label">Permitir</string>
+    <string name="dialog_negative_label">Não</string>
+    <string name="dialog_permissao_localizacao">"Precisamos de sua localização para a monetização eficiente do aplicativo e assim mante-lo gratuito"</string>
+    <!--
+    INTRODUCING “App Name” CALLER ID!
+
+“App Name” caller ID helps you identify numbers real-time while the call is happening - even the ones not in your phonebook. No more number guessing or avoiding unknown callers – “App Name” caller ID prepares you for the call. If your local pizza vendor doesn’t pick up the phone when you’re calling, “App Name” caller ID will suggest alternative nearby places. You can always adjust your caller ID settings in the settings menu.
+
+
+    O identificador de chamadas “App Name" ajuda você a identificar números em tempo real enquanto a ligação está acontecendo - mesmo os que não estão nos seus contatos. Chega de tentar adivinhar o número ou evitar ligações desconhecidas - o identificador de chamadas “App Name" prepara você para a ligação. Se a sua pizzaria não atender quando você ligar, o identificador de chamadas “App Name" irá sugerir outros lugares próximos. Você sempre pode ajustar as configurações do seu identificador de chamadas no menu de configurações.
+    -->
+</resources>
