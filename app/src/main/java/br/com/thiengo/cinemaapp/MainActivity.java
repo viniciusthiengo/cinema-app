@@ -3,7 +3,6 @@ package br.com.thiengo.cinemaapp;
 import com.calldorado.Calldorado;
 import android.Manifest;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -16,11 +15,10 @@ import android.util.Log;
 import android.view.View;
 
 import com.appodeal.ads.Appodeal;
-import com.appodeal.ads.InterstitialCallbacks;
 import com.appodeal.ads.NonSkippableVideoCallbacks;
 
 import br.com.thiengo.cinemaapp.data.Mock;
-import br.com.thiengo.cinemaapp.data.SPAdSupport;
+import br.com.thiengo.cinemaapp.data.SPAdSuporte;
 import io.huq.sourcekit.HISourceKit;
 import me.drakeet.materialdialog.MaterialDialog;
 
@@ -31,18 +29,10 @@ public class MainActivity extends AppCompatActivity implements NonSkippableVideo
     private boolean isVideoShown = false;
 
 
-
-
-    private void initializeCalldorado() {
-        Calldorado.startCalldorado(this);
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         initializeCalldorado();
-
         setContentView(R.layout.activity_main);
 
         initRecycler();
@@ -62,6 +52,10 @@ public class MainActivity extends AppCompatActivity implements NonSkippableVideo
                 initHuq();
             }
         }
+    }
+
+    private void initializeCalldorado() {
+        Calldorado.startCalldorado(this);
     }
 
     private void solicitacaoPermissao(){
@@ -124,7 +118,7 @@ public class MainActivity extends AppCompatActivity implements NonSkippableVideo
         Appodeal.show(this, Appodeal.BANNER_BOTTOM);
         //Appodeal.disableNetwork(this, "cheetah");
 
-        SPAdSupport.incrementAppOpened(this);
+        SPAdSuporte.incrementarCounterAbertura(this);
     }
 
     private void initHuq(){
@@ -152,14 +146,14 @@ public class MainActivity extends AppCompatActivity implements NonSkippableVideo
 
     @Override
     public void onBackPressed() {
-        if( SPAdSupport.isThirdTime(this)
+        if( SPAdSuporte.ehTerceiraAbertura(this)
                 && Appodeal.isLoaded(Appodeal.NON_SKIPPABLE_VIDEO)
                 && !isVideoShown ){
             Appodeal.show(this, Appodeal.NON_SKIPPABLE_VIDEO);
         }
         super.onBackPressed();
 
-        Log.i("log", "SPAdSupport.isThirdTime(this): "+SPAdSupport.isThirdTime(this));
+        Log.i("log", "SPAdSupport.ehTerceiraAbertura(this): "+ SPAdSuporte.ehTerceiraAbertura(this));
         Log.i("log", "Appodeal.isLoaded(Appodeal.NON_SKIPPABLE_VIDEO): "+Appodeal.isLoaded(Appodeal.NON_SKIPPABLE_VIDEO));
         Log.i("log", "isVideoShown: "+isVideoShown);
     }
