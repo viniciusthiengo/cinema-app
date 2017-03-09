@@ -43,13 +43,14 @@ public class MainActivity extends AppCompatActivity
 
         initRecycler();
         initAppOdeal();
-        solicitacaoPermissao();
+        //solicitacaoPermissao();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         Appodeal.onResume(this, Appodeal.BANNER);
+        verificacaoPermissaoHuq();
     }
 
     @Override
@@ -69,19 +70,6 @@ public class MainActivity extends AppCompatActivity
         super.onBackPressed();
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        if( requestCode == PERMISSAO_REQUISICAO_CODIGO ){
-            if( permissions[0].equalsIgnoreCase( Manifest.permission.ACCESS_FINE_LOCATION )
-                    && grantResults[0] == PackageManager.PERMISSION_GRANTED ){
-
-                initHuq();
-            }
-        }
-    }
-
     private void initRecycler(){
         RecyclerView rvFilmes = (RecyclerView) findViewById(R.id.rv_filmes);
         rvFilmes.setHasFixedSize(true);
@@ -97,14 +85,8 @@ public class MainActivity extends AppCompatActivity
         Calldorado.startCalldorado(this);
     }
 
-    private void solicitacaoPermissao(){
-
-        if ( !ehPermitido( this, Manifest.permission.ACCESS_FINE_LOCATION ) ) {
-            permissaoDialog(
-                getResources().getString(R.string.dialog_permissao_localizacao),
-                new String[]{Manifest.permission.ACCESS_FINE_LOCATION} );
-        }
-        else{
+    private void verificacaoPermissaoHuq(){
+        if ( ehPermitido( this, Manifest.permission.ACCESS_FINE_LOCATION ) ) {
             initHuq();
         }
     }
@@ -112,27 +94,6 @@ public class MainActivity extends AppCompatActivity
     public static boolean ehPermitido(Context context, String permissaoCodigo ){
         int permissao = ContextCompat.checkSelfPermission(context, permissaoCodigo);
         return permissao == PackageManager.PERMISSION_GRANTED;
-    }
-
-    private void permissaoDialog( String message, final String[] permissions ){
-        materialDialog = new MaterialDialog(this)
-            .setTitle( R.string.dialog_titulo )
-            .setMessage( message )
-            .setPositiveButton( R.string.dialog_positive_label, new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    ActivityCompat.requestPermissions(MainActivity.this, permissions, PERMISSAO_REQUISICAO_CODIGO);
-                    materialDialog.dismiss();
-                }
-            })
-            .setNegativeButton( R.string.dialog_negative_label, new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    materialDialog.dismiss();
-                }
-            });
-
-        materialDialog.show();
     }
 
     private void initAppOdeal(){
@@ -157,6 +118,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void initHuq(){
+        Log.i("Log", "initHuq() called");
         String appKey = getResources().getString(R.string.huq_api_key);
         HISourceKit.getInstance().recordWithAPIKey( appKey, getApplication() );
     }
