@@ -4,22 +4,23 @@
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorPrimaryDark"
     tools:context="br.com.thiengo.cinemaapp.MainActivity">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_filmes"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_above="@+id/appodealBannerView"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true" />
+        android:layout_alignParentStart="true" />
 
     <com.appodeal.ads.BannerView
         android:id="@+id/appodealBannerView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/rv_filmes"
-        android:visibility="gone" />
+        android:visibility="visible" />
 </RelativeLayout>

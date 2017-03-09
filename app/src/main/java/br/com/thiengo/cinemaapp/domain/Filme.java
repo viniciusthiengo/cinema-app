@@ -9,8 +9,7 @@ import java.util.ArrayList;
 public class Filme {
     private String nome;
     private String urlImagem;
-    private String synopse;
-    private ArrayList<Sala> salas = new ArrayList<>();
+    private int numSalas;
 
 
     public String getNome() {
@@ -29,19 +28,11 @@ public class Filme {
         this.urlImagem = urlImagem;
     }
 
-    public String getSynopse() {
-        return synopse;
+    public int getNumSalas() {
+        return numSalas;
     }
 
-    public void setSynopse(String synopse) {
-        this.synopse = synopse;
-    }
-
-    public ArrayList<Sala> getSalas() {
-        return salas;
-    }
-
-    public void setSalas(ArrayList<Sala> salas) {
-        this.salas = salas;
+    public void setNumSalas(int numSalas) {
+        this.numSalas = numSalas;
     }
 }

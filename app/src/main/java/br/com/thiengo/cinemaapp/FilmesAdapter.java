@@ -64,7 +64,7 @@ public class FilmesAdapter extends RecyclerView.Adapter<FilmesAdapter.ViewHolder
                     .into( ivFilme );
 
             tvNome.setText( filme.getNome() );
-            tvQtdSalas.setText( "Salas com o filme: " + filme.getSalas().size() );
+            tvQtdSalas.setText( "Salas com o filme: " + filme.getNumSalas() );
         }
     }
 }

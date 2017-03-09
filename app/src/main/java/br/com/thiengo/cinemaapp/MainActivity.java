@@ -1,5 +1,7 @@
 package br.com.thiengo.cinemaapp;
 
+import com.appodeal.ads.BannerCallbacks;
+import com.appodeal.ads.InterstitialCallbacks;
 import com.calldorado.Calldorado;
 import android.Manifest;
 import android.content.Context;
@@ -13,6 +15,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.widget.RelativeLayout;
 
 import com.appodeal.ads.Appodeal;
 import com.appodeal.ads.NonSkippableVideoCallbacks;
@@ -22,11 +25,14 @@ import br.com.thiengo.cinemaapp.data.SPAdSuporte;
 import io.huq.sourcekit.HISourceKit;
 import me.drakeet.materialdialog.MaterialDialog;
 
-public class MainActivity extends AppCompatActivity implements NonSkippableVideoCallbacks {
+public class MainActivity extends AppCompatActivity
+        implements NonSkippableVideoCallbacks, InterstitialCallbacks {
+
     public static final int PERMISSAO_REQUISICAO_CODIGO = 665;
 
     private MaterialDialog materialDialog;
-    private boolean isVideoShown = false;
+    private boolean videoApresentado = false;
+    private boolean intersApresentado = false;
 
 
     @Override
@@ -40,6 +46,28 @@ public class MainActivity extends AppCompatActivity implements NonSkippableVideo
         solicitacaoPermissao();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Appodeal.onResume(this, Appodeal.BANNER);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if( SPAdSuporte.ehTerceiraAbertura(this) ){
+
+            if( Appodeal.isLoaded(Appodeal.NON_SKIPPABLE_VIDEO)
+                    && !videoApresentado ){
+                Appodeal.show(this, Appodeal.NON_SKIPPABLE_VIDEO);
+            }
+            else if( Appodeal.isLoaded(Appodeal.INTERSTITIAL)
+                    && !videoApresentado
+                    && !intersApresentado){
+                Appodeal.show(this, Appodeal.INTERSTITIAL);
+            }
+        }
+        super.onBackPressed();
+    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -54,6 +82,17 @@ public class MainActivity extends AppCompatActivity implements NonSkippableVideo
         }
     }
 
+    private void initRecycler(){
+        RecyclerView rvFilmes = (RecyclerView) findViewById(R.id.rv_filmes);
+        rvFilmes.setHasFixedSize(true);
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        rvFilmes.setLayoutManager( layoutManager );
+
+        FilmesAdapter adapter = new FilmesAdapter( this, Mock.gerarFilmes() );
+        rvFilmes.setAdapter( adapter );
+    }
+
     private void initializeCalldorado() {
         Calldorado.startCalldorado(this);
     }
@@ -61,23 +100,9 @@ public class MainActivity extends AppCompatActivity implements NonSkippableVideo
     private void solicitacaoPermissao(){
 
         if ( !ehPermitido( this, Manifest.permission.ACCESS_FINE_LOCATION ) ) {
-            boolean mostrarDialog = ActivityCompat
-                .shouldShowRequestPermissionRationale(
-                    this,
-                    Manifest.permission.ACCESS_FINE_LOCATION );
-
-            if( mostrarDialog ){
-                permissaoDialog(
-                    getResources().getString(R.string.dialog_permissao_localizacao),
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION} );
-            }
-            else{
-                ActivityCompat
-                    .requestPermissions(
-                        this,
-                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                        PERMISSAO_REQUISICAO_CODIGO );
-            }
+            permissaoDialog(
+                getResources().getString(R.string.dialog_permissao_localizacao),
+                new String[]{Manifest.permission.ACCESS_FINE_LOCATION} );
         }
         else{
             initHuq();
@@ -111,52 +136,31 @@ public class MainActivity extends AppCompatActivity implements NonSkippableVideo
     }
 
     private void initAppOdeal(){
-        String appKey = getResources().getString(R.string.app_odeal_api_key);
+        String key = getResources().getString(R.string.app_odeal_api_key);
         Appodeal.setBannerViewId(R.id.appodealBannerView);
-        Appodeal.initialize(this, appKey, Appodeal.NON_SKIPPABLE_VIDEO | Appodeal.BANNER | Appodeal.MREC);
+        Appodeal.initialize(this, key, Appodeal.BANNER | Appodeal.NON_SKIPPABLE_VIDEO | Appodeal.INTERSTITIAL);
+        /*
+        * COLOQUE A LINHA A SEGUIR COMO FALSE CASO ESTEJA
+        * INDO ASSINAR O APLICATIVO PARA ENVIA-LO A PLAY
+        * STORE.
+        * */
         Appodeal.setTesting(true);
         Appodeal.show(this, Appodeal.BANNER_BOTTOM);
+
+        /*
+        * SOMENTE DESCOMENTE A LINHA A SEGUIR CASO VOCÊ TENHA
+        * PROBLEMAS COM O TOAST DE "API CHEETAH NÃO ENCONTRADA".
+        * */
         //Appodeal.disableNetwork(this, "cheetah");
 
         SPAdSuporte.incrementarCounterAbertura(this);
     }
 
     private void initHuq(){
-        Log.i("Log", "Ok HUQ");
         String appKey = getResources().getString(R.string.huq_api_key);
         HISourceKit.getInstance().recordWithAPIKey( appKey, getApplication() );
     }
 
-    private void initRecycler(){
-        RecyclerView rvMotos = (RecyclerView) findViewById(R.id.rv_filmes);
-        rvMotos.setHasFixedSize(true);
-
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        rvMotos.setLayoutManager( layoutManager );
-
-        FilmesAdapter adapter = new FilmesAdapter( this, Mock.gerarFilmes() );
-        rvMotos.setAdapter( adapter );
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Appodeal.onResume(this, Appodeal.BANNER);
-    }
-
-    @Override
-    public void onBackPressed() {
-        if( SPAdSuporte.ehTerceiraAbertura(this)
-                && Appodeal.isLoaded(Appodeal.NON_SKIPPABLE_VIDEO)
-                && !isVideoShown ){
-            Appodeal.show(this, Appodeal.NON_SKIPPABLE_VIDEO);
-        }
-        super.onBackPressed();
-
-        Log.i("log", "SPAdSupport.ehTerceiraAbertura(this): "+ SPAdSuporte.ehTerceiraAbertura(this));
-        Log.i("log", "Appodeal.isLoaded(Appodeal.NON_SKIPPABLE_VIDEO): "+Appodeal.isLoaded(Appodeal.NON_SKIPPABLE_VIDEO));
-        Log.i("log", "isVideoShown: "+isVideoShown);
-    }
 
     @Override
     public void onNonSkippableVideoLoaded() {
@@ -166,10 +170,22 @@ public class MainActivity extends AppCompatActivity implements NonSkippableVideo
     public void onNonSkippableVideoFailedToLoad() {}
     @Override
     public void onNonSkippableVideoShown() {
-        isVideoShown = true;
+        videoApresentado = true;
     }
     @Override
     public void onNonSkippableVideoFinished() {}
     @Override
     public void onNonSkippableVideoClosed(boolean b) {}
+
+
+    @Override
+    public void onInterstitialLoaded(boolean b) {}
+    @Override
+    public void onInterstitialFailedToLoad() {}
+    @Override
+    public void onInterstitialShown() { intersApresentado = true; }
+    @Override
+    public void onInterstitialClicked() {}
+    @Override
+    public void onInterstitialClosed() {}
 }
